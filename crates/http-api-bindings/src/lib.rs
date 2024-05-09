@@ -1,9 +1,11 @@
 mod llama;
 mod openai;
 mod openai_chat;
+mod azure;
 
 use std::sync::Arc;
 
+use azure::AzureEngine;
 use openai::OpenAIEngine;
 use openai_chat::OpenAIChatEngine;
 use serde_json::Value;
@@ -27,8 +29,18 @@ pub fn create(model: &str) -> (Arc<dyn CompletionStream>, Option<String>, Option
         let chat_template = get_optional_param(&params, "chat_template");
         let engine = llama::LlamaCppEngine::create(&api_endpoint, api_key);
         (Arc::new(engine), prompt_template, chat_template)
+    } else if kind == "azure" {
+        let model_name = get_optional_param(&params, "model_name").unwrap_or_default();
+        let api_endpoint = get_param(&params, "api_endpoint");
+        let api_key = get_optional_param(&params, "api_key");
+        let api_version = get_param(&params, "api_version");
+        let deployment_id = get_param(&params, "deployment_id");
+        let prompt_template = get_optional_param(&params, "prompt_template");
+        let chat_template = get_optional_param(&params, "chat_template");
+        let engine = AzureEngine::create(&api_endpoint, &api_version, &deployment_id, &model_name, api_key);
+        (Arc::new(engine), prompt_template, chat_template)
     } else {
-        panic!("Only openai are supported for http completion");
+        panic!("Only openai and azure are supported for http completion");
     }
 }
 

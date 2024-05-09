@@ -18,3 +18,4 @@ serde_json = { workspace = true }
 tabby-common = { path = "../tabby-common" }
 tabby-inference = { path = "../tabby-inference" }
 tracing.workspace = true
+tokio = "1.35.0"
