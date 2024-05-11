@@ -41,7 +41,7 @@ impl CompletionStream for AzureEngine {
                 .into(),
             ])
             .temperature(options.sampling_temperature)
-            .max_tokens(256u16)
+            .max_tokens(options.max_decoding_tokens as u16)
             // .stream(true)
             .build();
 
