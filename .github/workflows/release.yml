@@ -8,7 +8,7 @@ on:
       - 'nightly'
       - '!*-dev'
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main" , "simhuang/main"]
     paths:
       - '.github/workflows/release.yml'
 
