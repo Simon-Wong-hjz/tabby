@@ -1,10 +1,12 @@
 mod llama;
 mod openai;
+mod azure;
 
 use std::sync::Arc;
 
 use llama::LlamaCppEngine;
 use openai::OpenAIEngine;
+use azure::AzureEngine;
 use tabby_inference::CompletionStream;
 
 use crate::{get_optional_param, get_param};
@@ -26,6 +28,16 @@ pub fn create(model: &str) -> (Arc<dyn CompletionStream>, Option<String>, Option
         let prompt_template = get_optional_param(&params, "prompt_template");
         let chat_template = get_optional_param(&params, "chat_template");
         let engine = LlamaCppEngine::create(&api_endpoint, api_key);
+        (Arc::new(engine), prompt_template, chat_template)
+    } else if kind == "azure" {
+        let model_name = get_optional_param(&params, "model_name").unwrap_or_default();
+        let api_endpoint = get_param(&params, "api_endpoint");
+        let api_key = get_optional_param(&params, "api_key");
+        let api_version = get_param(&params, "api_version");
+        let deployment_id = get_param(&params, "deployment_id");
+        let prompt_template = get_optional_param(&params, "prompt_template");
+        let chat_template = get_optional_param(&params, "chat_template");
+        let engine = AzureEngine::create(&api_endpoint, &api_version, &deployment_id, &model_name, api_key);
         (Arc::new(engine), prompt_template, chat_template)
     } else {
         panic!("Only openai are supported for http completion");
