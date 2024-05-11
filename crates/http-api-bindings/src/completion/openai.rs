@@ -70,3 +70,27 @@ impl CompletionStream for OpenAIEngine {
         Box::pin(s)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use async_openai::types::CreateCompletionRequestArgs;
+
+    #[tokio::test]
+    async fn test_openai_engine() {
+        let config = OpenAIConfig::default()
+            .with_api_base("https://api.openai.com/v1")
+            .with_api_key(std::env::var("OPENAI_API_KEY").unwrap());
+        let client = async_openai::Client::with_config(config);
+
+        let request = CreateCompletionRequestArgs::default()
+            .model("gpt-3.5-turbo-instruct")
+            .prompt("Tell me the recipe of alfredo pasta")
+            .max_tokens(40_u16)
+            .build()
+            .unwrap();
+
+        let response = client.completions().create(request).await.unwrap();
+        println!("{:?}", response.choices.first().unwrap().text);
+    }
+}

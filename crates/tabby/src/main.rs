@@ -78,7 +78,7 @@ pub enum Device {
     Vulkan,
 
     #[strum(serialize = "experimental_http")]
-    #[clap(hide = true)]
+    // #[clap(hide = true)]
     ExperimentalHttp,
 }
 
